@@ -3,7 +3,7 @@ import { IsString } from 'class-validator';
 import {
   MediaTypeEnum,
   MediaStatusEnum,
-} from 'src/common/enums/mediaType.enum';
+} from '../../common/enums/mediaType.enum';
 export class CreateMediaDto {
   @ApiProperty({
     enum: MediaTypeEnum,

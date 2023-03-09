@@ -1,4 +1,5 @@
-import { BadRequest, NotFound, Ok } from './response-type';
+import { HttpStatus } from '@nestjs/common';
+import { BadRequest, NotFound, Ok, InternalServerError } from './response-type';
 export class StereoResponse {
   static Ok<Type>(
     data: Type,
@@ -30,8 +31,8 @@ export class StereoResponse {
 
   static BadRequest(
     error: unknown,
-    message = '',
-    errorCode = '',
+    message = 'Bad Request',
+    errorCode = HttpStatus.BAD_REQUEST,
     status = 'failed',
   ): BadRequest {
     return {
@@ -45,8 +46,8 @@ export class StereoResponse {
 
   static NotFoundRequest(
     error: unknown,
-    message = '',
-    errorCode = '',
+    message = 'Not Found',
+    errorCode = HttpStatus.NOT_FOUND,
     status = 'failed',
   ): NotFound {
     return {
@@ -57,6 +58,22 @@ export class StereoResponse {
       errorCode,
     } as NotFound;
   }
+
+  static InternalServerError(
+    error: unknown,
+    message = 'Internal Server Error',
+    errorCode = HttpStatus.INTERNAL_SERVER_ERROR,
+    status = 'failed',
+  ): InternalServerError {
+    return {
+      status,
+      error,
+      success: false,
+      message,
+      errorCode,
+    } as InternalServerError;
+  }
+
   static Paginated<T>(array: T, message = '', status?: string | number): Ok<T> {
     const { links, data, meta }: any = array;
     return {

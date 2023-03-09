@@ -18,6 +18,7 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Ok, StereoResponse } from '../common/response';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Media } from 'src/entities/media.entity';
+import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 
 @ApiTags('Media')
 @Controller('media')
@@ -55,6 +56,30 @@ export class MediaController {
   async findOne(@Param('id') id: string): Promise<Ok<Media>> {
     const media = await this.mediaService.findOne(id);
     return StereoResponse.Ok(media);
+  }
+
+  @Get('/search')
+  @ApiOperation({ summary: 'Search media by title and description' })
+  @ApiQuery({
+    name: 'query',
+    description: 'Paginate query',
+    required: false,
+    schema: {
+      type: 'object',
+      properties: {
+        page: { type: 'number', description: 'Page number', default: 1 },
+        limit: { type: 'number', description: 'Limit per page', default: 10 },
+        search: { type: 'string', description: 'Search term' },
+      },
+    },
+  })
+  async search(
+    @Paginate() query: PaginateQuery,
+  ): Promise<Ok<Paginated<Media>>> {
+    console.log(query);
+    console.log('query');
+    const media = await this.mediaService.search(query);
+    return StereoResponse.Paginated(media);
   }
 
   @Patch(':id')

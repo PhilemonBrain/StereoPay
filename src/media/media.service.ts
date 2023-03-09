@@ -11,9 +11,15 @@ import { Media } from '../entities/media.entity';
 import { StereoResponse } from 'src/common/response';
 import {
   IPaginationOptions,
-  paginate,
+  paginate as pags,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import {
+  FilterOperator,
+  PaginateQuery,
+  paginate,
+  Paginated,
+} from 'nestjs-paginate';
 import { ConfigService } from '@nestjs/config';
 import { configConstant } from '../common/constants/config.constants';
 
@@ -39,7 +45,7 @@ export class MediaService {
   async findAll(options: IPaginationOptions): Promise<Pagination<Media>> {
     const route =
       this.configService.get(configConstant.pagination.baseUrl) + 'media';
-    return paginate<Media>(this.mediaRepo, { ...options, route });
+    return pags<Media>(this.mediaRepo, { ...options, route });
   }
 
   async findOne(id: string) {
@@ -57,6 +63,21 @@ export class MediaService {
       );
     }
     return media;
+  }
+
+  async search(query: PaginateQuery): Promise<Paginated<Media>> {
+    console.log(query);
+    try {
+      return paginate(query, this.mediaRepo, {
+        sortableColumns: ['name', 'description'],
+        searchableColumns: ['name', 'description'],
+        defaultSortBy: [['id', 'DESC']],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        StereoResponse.BadRequest('Internal Server error', error.message),
+      );
+    }
   }
 
   update(id: number, updateMediaDto: UpdateMediaDto) {

@@ -3725,6 +3725,13 @@ neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+nestjs-paginate@^4.2.2:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/nestjs-paginate/-/nestjs-paginate-4.13.0.tgz#004d87a33804715f7939f47fd19ad855fe45f17a"
+  integrity sha512-G0lIx5Ix5I964sLwq2a3Vn7hcC8azJ14PuCPDcGDod842KqjPZPfziAQbs5onQo9ymTS54J76grbzzyOSa6t0Q==
+  dependencies:
+    lodash "^4.17.21"
+
 nestjs-typeorm-paginate@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/nestjs-typeorm-paginate/-/nestjs-typeorm-paginate-4.0.3.tgz#7dfda6988d424b022d0ca8715d88317d7b89f2b1"

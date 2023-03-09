@@ -74,8 +74,12 @@ export class StereoResponse {
     } as InternalServerError;
   }
 
-  static Paginated<T>(array: T, message = '', status?: string | number): Ok<T> {
-    const { links, items: data, meta }: any = array;
+  static Paginated<T>(
+    PaginateQueryResponse: T,
+    message = '',
+    status?: string | number,
+  ): Ok<T> {
+    const { links, data, meta }: any = PaginateQueryResponse;
     return {
       status,
       success: true,

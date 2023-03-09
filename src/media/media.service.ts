@@ -9,26 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Media } from '../entities/media.entity';
 import { StereoResponse } from 'src/common/response';
-import {
-  IPaginationOptions,
-  paginate as pags,
-  Pagination,
-} from 'nestjs-typeorm-paginate';
-import {
-  FilterOperator,
-  PaginateQuery,
-  paginate,
-  Paginated,
-} from 'nestjs-paginate';
-import { ConfigService } from '@nestjs/config';
-import { configConstant } from '../common/constants/config.constants';
+import { PaginateQuery, paginate, Paginated } from 'nestjs-paginate';
 
 @Injectable()
 export class MediaService {
   constructor(
     @InjectRepository(Media)
     private readonly mediaRepo: Repository<Media>,
-    private readonly configService: ConfigService,
   ) {}
 
   async createMedia(createMediaDto: CreateMediaDto): Promise<Media> {
@@ -40,12 +27,6 @@ export class MediaService {
         StereoResponse.InternalServerError(error),
       );
     }
-  }
-
-  async findAll(options: IPaginationOptions): Promise<Pagination<Media>> {
-    const route =
-      this.configService.get(configConstant.pagination.baseUrl) + 'media';
-    return pags<Media>(this.mediaRepo, { ...options, route });
   }
 
   async findOne(id: string) {
@@ -66,7 +47,6 @@ export class MediaService {
   }
 
   async search(query: PaginateQuery): Promise<Paginated<Media>> {
-    console.log(query);
     try {
       return paginate(query, this.mediaRepo, {
         sortableColumns: ['name', 'description'],

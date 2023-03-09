@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import {
   MediaTypeEnum,
   MediaStatusEnum,
@@ -8,6 +8,8 @@ export class CreateMediaDto {
   @ApiProperty({
     enum: MediaTypeEnum,
   })
+  @IsEnum(MediaTypeEnum)
+  @IsString()
   type: MediaTypeEnum;
 
   @ApiProperty()
@@ -25,5 +27,7 @@ export class CreateMediaDto {
   @ApiProperty({
     enum: MediaStatusEnum,
   })
+  @IsEnum(MediaStatusEnum)
+  @IsString()
   status: MediaStatusEnum;
 }

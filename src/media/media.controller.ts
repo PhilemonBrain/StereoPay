@@ -7,12 +7,17 @@ import {
   Param,
   Delete,
   HttpStatus,
+  ParseIntPipe,
+  DefaultValuePipe,
+  Query,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { StereoResponse } from '../common/response';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Ok, StereoResponse } from '../common/response';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { Media } from 'src/entities/media.entity';
 
 @ApiTags('Media')
 @Controller('media')
@@ -32,13 +37,22 @@ export class MediaController {
 
   @Get()
   @ApiOperation({ summary: 'Fetch a paginated list of existing media objects' })
-  findAll() {
-    return this.mediaService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Ok<Pagination<Media>>> {
+    const route = 'localhost';
+    const medias = await this.mediaService.findAll({
+      page,
+      limit,
+      route,
+    });
+    return StereoResponse.Paginated(medias);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.mediaService.findOne(+id);
+    return this.mediaService.findOne(id);
   }
 
   @Patch(':id')

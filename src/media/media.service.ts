@@ -14,17 +14,20 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { ConfigService } from '@nestjs/config';
+import { configConstant } from '../common/constants/config.constants';
+
 @Injectable()
 export class MediaService {
   constructor(
     @InjectRepository(Media)
     private readonly mediaRepo: Repository<Media>,
+    private readonly configService: ConfigService,
   ) {}
 
   async createMedia(createMediaDto: CreateMediaDto): Promise<Media> {
     try {
       const newMedia = this.mediaRepo.create(createMediaDto);
-      console.log(newMedia);
       return await this.mediaRepo.save(newMedia);
     } catch (error) {
       throw new InternalServerErrorException(
@@ -33,25 +36,27 @@ export class MediaService {
     }
   }
 
-  findAll(options: IPaginationOptions): Promise<Pagination<Media>> {
-    return paginate<Media>(this.mediaRepo, options);
-    // return `This action returns all media`;
+  async findAll(options: IPaginationOptions): Promise<Pagination<Media>> {
+    const route =
+      this.configService.get(configConstant.pagination.baseUrl) + 'media';
+    return paginate<Media>(this.mediaRepo, { ...options, route });
   }
 
   async findOne(id: string) {
+    let media;
     try {
-      const media = await this.mediaRepo.findOne({ where: { id } });
-      if (!media) {
-        throw new NotFoundException(
-          StereoResponse.NotFoundRequest('Invalid media id'),
-        );
-      }
-      return media;
+      media = await this.mediaRepo.findOne({ where: { id } });
     } catch (error) {
       throw new InternalServerErrorException(
-        StereoResponse.InternalServerError(error),
+        StereoResponse.InternalServerError('Error Occured'),
       );
     }
+    if (!media) {
+      throw new NotFoundException(
+        StereoResponse.NotFoundRequest('Invalid media id'),
+      );
+    }
+    return media;
   }
 
   update(id: number, updateMediaDto: UpdateMediaDto) {

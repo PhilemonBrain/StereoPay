@@ -75,7 +75,7 @@ export class StereoResponse {
   }
 
   static Paginated<T>(array: T, message = '', status?: string | number): Ok<T> {
-    const { links, data, meta }: any = array;
+    const { links, items: data, meta }: any = array;
     return {
       status,
       success: true,

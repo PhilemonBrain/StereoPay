@@ -15,6 +15,7 @@ import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Ok, StereoResponse } from '../common/response';
 import { Media } from 'src/entities/media.entity';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
+import { UpdateResult } from 'typeorm';
 
 @ApiTags('Media')
 @Controller('media')
@@ -23,7 +24,9 @@ export class MediaController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new media object' })
-  async create(@Body() createMediaDto: CreateMediaDto) {
+  async create(
+    @Body() createMediaDto: CreateMediaDto,
+  ): Promise<Ok<UpdateResult>> {
     const response = await this.mediaService.createMedia(createMediaDto);
     return StereoResponse.Ok(
       response,
@@ -36,7 +39,7 @@ export class MediaController {
   @ApiOperation({ summary: 'Fetch a single media by id' })
   async findOne(@Param('id') id: string): Promise<Ok<Media>> {
     const media = await this.mediaService.findMedia(id);
-    return StereoResponse.Ok(media);
+    return StereoResponse.Ok(media, 'Media Found', HttpStatus.FOUND);
   }
 
   @Get('search')
@@ -61,7 +64,11 @@ export class MediaController {
     @Paginate() query: PaginateQuery,
   ): Promise<Ok<Paginated<Media>>> {
     const media = await this.mediaService.search(query);
-    return StereoResponse.Paginated(media);
+    return StereoResponse.Paginated(
+      media,
+      'Paginated Response',
+      HttpStatus.FOUND,
+    );
   }
 
   @Patch(':id')
@@ -69,18 +76,22 @@ export class MediaController {
   async update(
     @Param('id') id: string,
     @Body() updateMediaDto: UpdateMediaDto,
-  ) {
+  ): Promise<Ok<Media>> {
     const updatedMedia = await this.mediaService.updateMedia(
       id,
       updateMediaDto,
     );
-    return StereoResponse.Ok(updatedMedia, 'Update Successful');
+    return StereoResponse.Ok(updatedMedia, 'Update Successful', HttpStatus.OK);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft delete a media item by id.' })
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<Ok<UpdateResult>> {
     const deletedMedia = await this.mediaService.removeMedia(id);
-    return StereoResponse.Ok(deletedMedia, 'deleted successfully');
+    return StereoResponse.Ok(
+      deletedMedia,
+      'Deleted Successfully',
+      HttpStatus.OK,
+    );
   }
 }

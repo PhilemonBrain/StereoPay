@@ -4,13 +4,15 @@ export class StereoResponse {
   static Ok<Type>(
     data: Type,
     message = '',
-    status?: string | number,
+    statusCode = HttpStatus.OK,
   ): Ok<Type> {
     return {
-      status,
-      data,
-      success: true,
+      status: 'success',
       message,
+      data: {
+        ...data,
+        statusCode,
+      },
     } as Ok<Type>;
   }
 
@@ -33,14 +35,11 @@ export class StereoResponse {
     error: unknown,
     message = 'Bad Request',
     errorCode = HttpStatus.BAD_REQUEST,
-    status = 'failed',
   ): BadRequest {
     return {
-      status,
-      error,
-      success: false,
+      status: 'error',
       message,
-      errorCode,
+      data: { error, errorCode },
     } as BadRequest;
   }
 
@@ -48,14 +47,11 @@ export class StereoResponse {
     error: unknown,
     message = 'Not Found',
     errorCode = HttpStatus.NOT_FOUND,
-    status = 'failed',
   ): NotFound {
     return {
-      status,
-      error,
-      success: false,
+      status: 'error',
       message,
-      errorCode,
+      data: { error, errorCode },
     } as NotFound;
   }
 
@@ -63,30 +59,24 @@ export class StereoResponse {
     error: unknown,
     message = 'Internal Server Error',
     errorCode = HttpStatus.INTERNAL_SERVER_ERROR,
-    status = 'failed',
   ): InternalServerError {
     return {
-      status,
-      error,
-      success: false,
+      status: 'error',
       message,
-      errorCode,
+      data: { error, errorCode },
     } as InternalServerError;
   }
 
   static Paginated<T>(
     PaginateQueryResponse: T,
     message = '',
-    status?: string | number,
+    statusCode = HttpStatus.OK,
   ): Ok<T> {
-    const { links, data, meta }: any = PaginateQueryResponse;
+    const { links, data: items, meta }: any = PaginateQueryResponse;
     return {
-      status,
-      success: true,
-      data,
-      meta,
-      links,
+      status: 'success',
       message,
+      data: { statusCode, items, links, meta },
     } as Ok<T>;
   }
 }

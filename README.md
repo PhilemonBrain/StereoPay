@@ -10,11 +10,21 @@ Note Please: Because of the issues encountered while setting up MySQL on my loca
 $ npm install
 or
 $ yarn install
+
 ```
 
 ## DB Setup
 
 There is an .env.example in the root folder of this folder with the env variables needed to run this project.
+
+## Migration
+
+run migrations. once in the root folder, run the following migration command to run the already generated migration
+files
+
+```bash
+$ yarn migration
+```
 
 ## Running the app
 

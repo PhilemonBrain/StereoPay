@@ -29,8 +29,8 @@ export class MediaService {
     }
   }
 
-  async findOne(id: string) {
-    let media;
+  async findMedia(id: string): Promise<Media> {
+    let media: Media;
     try {
       media = await this.mediaRepo.findOne({ where: { id } });
     } catch (error) {
@@ -60,11 +60,14 @@ export class MediaService {
     }
   }
 
-  update(id: number, updateMediaDto: UpdateMediaDto) {
-    return `This action updates a #${id} media`;
+  async updateMedia(id: string, updateMediaDto: UpdateMediaDto) {
+    const media = await this.findMedia(id);
+    media.status = updateMediaDto.status;
+    return await this.mediaRepo.save(media);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} media`;
+  async removeMedia(id: string) {
+    await this.findMedia(id);
+    return await this.mediaRepo.softDelete({ id });
   }
 }

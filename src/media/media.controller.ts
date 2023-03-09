@@ -35,7 +35,7 @@ export class MediaController {
   @Get('single/:id')
   @ApiOperation({ summary: 'Fetch a single media by id' })
   async findOne(@Param('id') id: string): Promise<Ok<Media>> {
-    const media = await this.mediaService.findOne(id);
+    const media = await this.mediaService.findMedia(id);
     return StereoResponse.Ok(media);
   }
 
@@ -65,14 +65,22 @@ export class MediaController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Create an API' })
-  update(@Param('id') id: string, @Body() updateMediaDto: UpdateMediaDto) {
-    return this.mediaService.update(+id, updateMediaDto);
+  @ApiOperation({ summary: 'Update an existing media by id' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateMediaDto: UpdateMediaDto,
+  ) {
+    const updatedMedia = await this.mediaService.updateMedia(
+      id,
+      updateMediaDto,
+    );
+    return StereoResponse.Ok(updatedMedia, 'Update Successful');
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Create an API' })
-  remove(@Param('id') id: string) {
-    return this.mediaService.remove(+id);
+  @ApiOperation({ summary: 'Soft delete a media item by id.' })
+  async remove(@Param('id') id: string) {
+    const deletedMedia = await this.mediaService.removeMedia(id);
+    return StereoResponse.Ok(deletedMedia, 'deleted successfully');
   }
 }
